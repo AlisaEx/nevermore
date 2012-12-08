@@ -1,58 +1,51 @@
 //load the AMD modules we need
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
 
-  var x = 100;
-  var y = 100;
-  var speed = 2.5;
+  var simonx = 100;
+  var simony = 100;
+  var simonSpeed = 2.5;
 
-  //setup a ResourceManager to use in the game
+  //Resource Manager
   var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
+  var backImg = rm.loadImage('images/backImg.png');
   var simon = rm.loadImage('images/simon.png');
   
-  //setup a GameCore instance
+  //GameCore
   var game = new GameCore({
     canvasId: 'canvas',
     resourceManager: rm,
-    initInput: function(im){ //im = this.inputManager
-      //tells the input manager to listen for key events
+    initInput: function(im){ 
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
-      im.addKeyAction(keys.UP_ARROW);
-      im.addKeyAction(keys.DOWN_ARROW);
+      im.addKeyAction(keys.SPACE);
     },
     handleInput: function(im){
-
-      //just an example showing how to check for presses, could be done more effeciently
-
-      if(im.keyActions[keys.LEFT_ARROW].isPressed()){
-        x-= speed;
+      if (simony<(this.height-simon.height-2)){
+       simony = simony + simonSpeed + 2;
       }
 
-      if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
-        x+= speed;
+      if(im.keyActions[keys.LEFT_ARROW].isPressed() && simonx > 0){
+        simonx-= simonSpeed;
       }
 
-      if(im.keyActions[keys.UP_ARROW].isPressed()){
-        y-= speed;
+      if(im.keyActions[keys.RIGHT_ARROW].isPressed() && simonx < this.width){
+        simonx+= simonSpeed;
       }
 
-      if(im.keyActions[keys.DOWN_ARROW].isPressed()){
-        y+= speed;
+      if(im.keyActions[keys.SPACE].isPressed() && simony > 0){
+        simony-= simonSpeed;
       }
     },
+
+    //Update
     update: function(millis){
-      //no real game state to update in this example
+      
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
-      context.drawImage(simon, x, y);
+      context.drawImage(simon, simonx, simony);
     }
   });
-
-  //if you want to take a look at the game object in dev tools
   console.log(game);
-
-  //launch the game!
   game.run();
 });
