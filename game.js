@@ -2,7 +2,7 @@
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
 
   var simonx = 100;
-  var simony = 100;
+  var simony = 300;
   var simonSpeed = 2.5;
 
   //Resource Manager
@@ -20,19 +20,19 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
       im.addKeyAction(keys.SPACE);
     },
     handleInput: function(im){
-      if (simony<(this.height-simon.height-2)){
-       simony = simony + simonSpeed + 2;
+      if (simony<(this.height-simon.height)){
+       simony = simony + simonSpeed + 5;
       }
 
       if(im.keyActions[keys.LEFT_ARROW].isPressed() && simonx > 0){
         simonx-= simonSpeed;
       }
 
-      if(im.keyActions[keys.RIGHT_ARROW].isPressed() && simonx < this.width){
+      if(im.keyActions[keys.RIGHT_ARROW].isPressed() && simonx < (this.width - simon.width)){
         simonx+= simonSpeed;
       }
 
-      if(im.keyActions[keys.SPACE].isPressed() && simony > 0){
+      if(im.keyActions[keys.SPACE].isPressed() && simony > 10){
         simony-= simonSpeed;
       }
     },
