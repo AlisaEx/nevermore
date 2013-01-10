@@ -2,14 +2,20 @@
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
 
   var simonx = 400;
-  var simony = 195;
+  var simony = 193;
+  var rimx = 260;
+  var rimy = 200;
   var simonSpeed = 2.5;
+  var angularVelocity = .03;
+  var angle = 0;
 
 
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
   var rim = rm.loadImage('images/outterRim.png');
   var simon = rm.loadImage('images/simon.png');
+  rim.x = 442;
+  rim.y = 382;
   
   var game = new GameCore({
     canvasId: 'canvas',
@@ -22,24 +28,29 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
     },
     handleInput: function(im){
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
-        x-= simonSpeed;
+        angle -= angularVelocity;
       }
 
       if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
-        x+= simonSpeed;
+        angle += angularVelocity;
       }
 
-      if(im.keyActions[keys.SPACE].isPressed()){
-        y-= simonSpeed;
-      }
+      // if(im.keyActions[keys.SPACE].isPressed()){
+      //   simony-= simonSpeed;
+      // }
     },
     update: function(millis){
       
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
-      context.drawImage(rim, 260,200);
+      context.drawImage(rim, 260, 200);
+      context.save();
+      context.translate(rim.x, rim.y);
+      context.rotate(angle);
       context.drawImage(simon, simonx, simony);
+      context.translate(-(rim.x), -(rim.y));
+      context.restore();
     }
   });
 
