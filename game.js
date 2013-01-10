@@ -1,29 +1,26 @@
-//load the AMD modules we need
+
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
 
-  var simonx = 100;
-  var simony = 100;
+  var simonx = 400;
+  var simony = 195;
   var simonSpeed = 2.5;
 
-  //setup a ResourceManager to use in the game
+
   var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/backImg.png');
+  var backImg = rm.loadImage('images/background.png');
+  var rim = rm.loadImage('images/outterRim.png');
   var simon = rm.loadImage('images/simon.png');
   
-  //setup a GameCore instance
   var game = new GameCore({
     canvasId: 'canvas',
     resourceManager: rm,
-    initInput: function(im){ //im = this.inputManager
-      //tells the input manager to listen for key events
+    initInput: function(im){ 
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
-      im.addKeyAction(keys.UP_ARROW);
+      im.addKeyAction(keys.SPACE);
+      im.addKeyAction(keys.ENTER);
     },
     handleInput: function(im){
-      y = y + simonSpeed;
-      //just an example showing how to check for presses, could be done more effeciently
-
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
         x-= simonSpeed;
       }
@@ -32,22 +29,20 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
         x+= simonSpeed;
       }
 
-      if(im.keyActions[keys.UP_ARROW].isPressed()){
+      if(im.keyActions[keys.SPACE].isPressed()){
         y-= simonSpeed;
       }
     },
     update: function(millis){
-      //no real game state to update in this example
+      
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
-      context.drawImage(simon, x, y);
+      context.drawImage(rim, 260,200);
+      context.drawImage(simon, simonx, simony);
     }
   });
 
-  //if you want to take a look at the game object in dev tools
-  console.log(game);
 
-  //launch the game!
   game.run();
 });
