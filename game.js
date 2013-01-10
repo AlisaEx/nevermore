@@ -1,4 +1,3 @@
-
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
 
   var simonx = 400;
@@ -17,6 +16,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
   rim.x = 442;
   rim.y = 382;
   
+
   var game = new GameCore({
     canvasId: 'canvas',
     resourceManager: rm,
@@ -53,7 +53,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
       context.restore();
     }
   });
-
 
   game.run();
 });
