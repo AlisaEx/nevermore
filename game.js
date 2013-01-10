@@ -42,14 +42,14 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
     update: function(millis){
       
     },
-    draw: function(context){
+    draw: function(context, scale){
       context.drawImage(backImg, 0, 0, this.width, this.height);
       context.drawImage(rim, 260, 200);
       context.save();
-      context.translate(rim.x, rim.y);
+      context.translate(rim.x+rimx*scale, rim.y+rimy*scale);
       context.rotate(angle);
       context.drawImage(simon, simonx, simony);
-      context.translate(-(rim.x), -(rim.y));
+      context.translate(-(rim.x+rimx*scale), -(rim.y+rimy*scale));
       context.restore();
     }
   });
