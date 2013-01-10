@@ -1,13 +1,13 @@
 //load the AMD modules we need
 require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(GameCore, ResourceManager, keys){
 
-  var x = 100;
-  var y = 100;
-  var speed = 2.5;
+  var simonx = 100;
+  var simony = 100;
+  var simonSpeed = 2.5;
 
   //setup a ResourceManager to use in the game
   var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
+  var backImg = rm.loadImage('images/backImg.png');
   var simon = rm.loadImage('images/simon.png');
   
   //setup a GameCore instance
@@ -19,26 +19,21 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
       im.addKeyAction(keys.UP_ARROW);
-      im.addKeyAction(keys.DOWN_ARROW);
     },
     handleInput: function(im){
-
+      y = y + simonSpeed;
       //just an example showing how to check for presses, could be done more effeciently
 
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
-        x-= speed;
+        x-= simonSpeed;
       }
 
       if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
-        x+= speed;
+        x+= simonSpeed;
       }
 
       if(im.keyActions[keys.UP_ARROW].isPressed()){
-        y-= speed;
-      }
-
-      if(im.keyActions[keys.DOWN_ARROW].isPressed()){
-        y+= speed;
+        y-= simonSpeed;
       }
     },
     update: function(millis){
