@@ -20,8 +20,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'dojo/keys'], function(Gam
     initInput: function(im){ 
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
-      im.addKeyAction(keys.SPACE);
-      im.addKeyAction(keys.ENTER);
     },
     handleInput: function(im){
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
