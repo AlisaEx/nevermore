@@ -1,5 +1,5 @@
-require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'plugins/loadImage!Gunter.png', 'plugins/loadImage!KnifeBunny.png', 'dojo/keys'],
-  function(GameCore, ResourceManager, Sprite, Animation, gunterImg, bunnyImg, keys){
+require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'plugins/loadImage!ChainsawBear.png', 'plugins/loadImage!Gunter.png', 'plugins/loadImage!KnifeBunny.png', 'dojo/keys'],
+  function(GameCore, ResourceManager, Sprite, Animation, bearImg, gunterImg, bunnyImg, keys){
   'use strict';
   var earthx = 260;
   var earthy = 200;
@@ -7,9 +7,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angle = 0;
 
       //new sprite object maintian position, and velocities
-  // var bear = new Sprite({x:100,y:300, w:90, h: 128, dx: 0, dy: 0});
-  var gunter = new Sprite({x:100,y:100, w:120, h: 128, dx: 0, dy: 0});
-  var bunny = new Sprite({x:500,y:100, w:120, h: 128, dx: 0, dy: 0});
+  var bear = new Sprite({x:260, y:200, w:8640, h: 128, dx: 0, dy: 0});
+  var gunter = new Sprite({x:400, y:200, w:100, h: 32, dx: 0, dy: 0});
+  var bunny = new Sprite({x:500, y:200, w:896, h: 40, dx: 0, dy: 0});
 
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
@@ -18,9 +18,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
 
   // set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
-  // bear.anim = Animation.prototype.createFromSheet(8, 100, bearImg, 96, 96, 10);
-  gunter.anim = Animation.prototype.createFromSheet(8, 100, gunterImg, 96, 96);
-  bunny.anim = Animation.prototype.createFromSheet(8, 100, bunnyImg, 96, 96);
+  bear.anim = Animation.prototype.createFromSheet(72, 100, bearImg, 120, 128);
+  gunter.anim = Animation.prototype.createFromSheet(37, 100, gunterImg, 56, 32);
+  bunny.anim = Animation.prototype.createFromSheet(16, 100, bunnyImg, 56, 40);
 
 
   var game = new GameCore({
@@ -41,16 +41,16 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
     },
     update: function(millis){
-      // bear.update(millis);
-      gunter.update(millis);
       bunny.update(millis);
+      bear.update(millis);
+      gunter.update(millis);
     },
     draw: function(context){
       context.drawImage(backImg, 0, 0, this.width, this.height);
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      // bear.draw(context);
-      gunter.draw(context);
       bunny.draw(context);
+      bear.draw(context);
+      gunter.draw(context);
       context.save();
       context.translate(backImg.width/2, backImg.height/2);
       context.rotate(angle);
