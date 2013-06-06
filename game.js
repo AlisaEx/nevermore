@@ -3,8 +3,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   'use strict';
 
       /// global variables ///
-  var earthx = 260;
-  var earthy = 200;
   var angularVelocity = .03;
   var angleSimon = 0;
   var angleBunny = 180;
@@ -14,10 +12,10 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
 
       /// new sprite object maintian position, and velocities ///
-  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0})
-  var bear = new Sprite({x:175, y:400, width:8520, height: 128, dx: 0, dy: 0});
-  var gunter = new Sprite({x:640, y:300, width:100, height: 32, dx: 0, dy: 0});
-  var bunny = new Sprite({x:460, y:540, width:896, height: 40, dx: 0, dy: 0});
+  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 16});
+  var bear = new Sprite({x:175, y:400, width:8520, height: 128, dx: 0, dy: 0, collisionRadius: 60});
+  var gunter = new Sprite({x:640, y:300, width:100, height: 32, dx: 0, dy: 0, collisionRadius: 28});
+  var bunny = new Sprite({x:460, y:540, width:896, height: 40, dx: 0, dy: 0, collisionRadius: 28});
 
       /// load images ///
   var rm = new ResourceManager();
@@ -33,10 +31,11 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
       /// collision detection function ///
   function collides(a, b) {
-    return a.x < b.x + b.width &&
-          a.x + a.width > b.x &&
+    return a.x < b.x + b.collisionRadius &&
+          a.x + a.collisionRadius > b.x &&
           a.y < b.y + b.height &&
           a.y + a.height > b.y;
+
   }
       /// converts degrees to radians for rotate function ///
   function degToRad(angle){
@@ -63,6 +62,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       }
       if(im.keyActions[keys.ENTER].isPressed()){
         gameStart = true;
+        console.log(simon.collisionRadius)
       }
     },
 
@@ -72,6 +72,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       bunny.update(millis);
       bear.update(millis);
       gunter.update(millis);
+      if (collides(gunter,simon)){
+        console.log("it works!");
+      }
     },
     draw: function(context){
       function rotate(sprite, angle){
