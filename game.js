@@ -7,9 +7,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angle = 0;
 
       //new sprite object maintian position, and velocities
-  var bear = new Sprite({x:260, y:200, w:8640, h: 128, dx: 0, dy: 0});
-  var gunter = new Sprite({x:400, y:200, w:100, h: 32, dx: 0, dy: 0});
-  var bunny = new Sprite({x:500, y:200, w:896, h: 40, dx: 0, dy: 0});
+  var bear = new Sprite({x:230, y:250, w:8640, h: 128, dx: 0, dy: 0});
+  var gunter = new Sprite({x:600, y:300, w:100, h: 32, dx: 0, dy: 0});
+  var bunny = new Sprite({x:430, y:470, w:896, h: 40, dx: 0, dy: 0});
 
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
