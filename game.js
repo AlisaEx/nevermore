@@ -5,9 +5,10 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var earthy = 200;
   var angularVelocity = .03;
   var angle = 0;
+  var gameStart = false;
 
       //new sprite object maintian position, and velocities
-  var bear = new Sprite({x:230, y:250, w:8640, h: 128, dx: 0, dy: 0});
+  var bear = new Sprite({x:230, y:250, w:8520, h: 128, dx: 0, dy: 0});
   var gunter = new Sprite({x:600, y:300, w:100, h: 32, dx: 0, dy: 0});
   var bunny = new Sprite({x:430, y:470, w:896, h: 40, dx: 0, dy: 0});
 
@@ -18,7 +19,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
 
   // set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
-  bear.anim = Animation.prototype.createFromSheet(72, 100, bearImg, 120, 128);
+  bear.anim = Animation.prototype.createFromSheet(71, 100, bearImg, 120, 128);
   gunter.anim = Animation.prototype.createFromSheet(37, 100, gunterImg, 56, 32);
   bunny.anim = Animation.prototype.createFromSheet(16, 100, bunnyImg, 56, 40);
 
@@ -38,6 +39,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
         angle += angularVelocity;
       }
+      if(im.keyActions[keys.ENTER].isPressed()){
+        gameStart = true;
+      }
 
     },
     update: function(millis){
@@ -46,8 +50,19 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       gunter.update(millis);
     },
     draw: function(context){
-      context.drawImage(backImg, 0, 0, this.width, this.height);
+      if (gameStart === false){
+        context.drawImage(backImg,0,0, this.width, this.height);
+        context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
+        context.font = 'italic 28pt Calibri';
+        context.fillStyle ='black';
+        context.fillText('Welcome to Nevermore.', 300, backImg.height/2);
+        context.fillText('Press ENTER to start.', 350, backImg.height/2 + 50);
+      }
+      else{
+      context.drawImage(backImg, 0, 0, this.width, this.height)
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
+      // context.save();
+      // context.translate()
       bunny.draw(context);
       bear.draw(context);
       gunter.draw(context);
@@ -57,6 +72,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       context.drawImage(simon, 0, -earth.height/2-simon.height/2);
       context.restore();
     }
+  }
   });
 
   game.run();
