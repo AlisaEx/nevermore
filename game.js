@@ -6,11 +6,17 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angularVelocity = .03;
   var angle = 0;
   var gameStart = false;
+  function collides(a, b) {
+    return a.x < b.x + b.width &&
+          a.x + a.width > b.x &&
+          a.y < b.y + b.height &&
+          a.y + a.height > b.y;
+  }
 
       //new sprite object maintian position, and velocities
-  var bear = new Sprite({x:230, y:250, w:8520, h: 128, dx: 0, dy: 0});
-  var gunter = new Sprite({x:600, y:300, w:100, h: 32, dx: 0, dy: 0});
-  var bunny = new Sprite({x:430, y:470, w:896, h: 40, dx: 0, dy: 0});
+  var bear = new Sprite({x:230, y:250, width:8520, height: 128, dx: 0, dy: 0});
+  var gunter = new Sprite({x:600, y:300, width:100, height: 32, dx: 0, dy: 0});
+  var bunny = new Sprite({x:430, y:470, width:896, height: 40, dx: 0, dy: 0});
 
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
@@ -61,11 +67,24 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       else{
       context.drawImage(backImg, 0, 0, this.width, this.height)
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      // context.save();
-      // context.translate()
+      context.save();
+      context.translate(bunny.x, bunny.y);
+      context.rotate(90);
       bunny.draw(context);
+      context.translate(-bunny.x/2, -bunny.y/2);
+      context.restore();
+      context.save();
+      context.translate(bear.x, bear.y);
+      context.rotate(260);
       bear.draw(context);
+      context.translate(0, 0);
+      context.restore();
+      context.save();
+      context.translate(gunter.x, gunter.y);
+      context.rotate(90);
       gunter.draw(context);
+      context.translate(0,0);
+      context.restore();
       context.save();
       context.translate(backImg.width/2, backImg.height/2);
       context.rotate(angle);
