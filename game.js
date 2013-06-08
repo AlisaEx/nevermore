@@ -31,12 +31,12 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
       /// collision detection function ///
   function collides(a, b) {
-    return a.x < b.x + b.collisionRadius &&
-          a.x + a.collisionRadius > b.x &&
-          a.y < b.y + b.height &&
-          a.y + a.height > b.y;
-
+    return a.x < b.x + b.width && 
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height && 
+           a.y + a.height > b.y;
   }
+
       /// converts degrees to radians for rotate function ///
   function degToRad(angle){
     return (angle*Math.PI)/180
@@ -49,32 +49,38 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     initInput: function(im){ 
       im.addKeyAction(keys.LEFT_ARROW);
       im.addKeyAction(keys.RIGHT_ARROW);
+      im.addKeyAction(keys.UP_ARROW);
       im.addKeyAction(keys.ENTER);
     },
 
         /// handles input ///
     handleInput: function(im){
+      if (simon.y < -209){
+        simon.y = -200;
+      }
       if(im.keyActions[keys.LEFT_ARROW].isPressed()){
         angleSimon -= angularVelocity;
       }
       if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
         angleSimon += angularVelocity;
       }
+      if(im.keyActions[keys.UP_ARROW].isPressed()){
+          simon.y -= 10;
+      }
       if(im.keyActions[keys.ENTER].isPressed()){
         gameStart = true;
-        console.log(simon.collisionRadius)
       }
     },
 
         /// updates the game state every millisecond ///
     update: function(millis){
+      if (collides(simon,gunter) === true){
+        console.log("it works!");
+      }
       simon.update(millis);
       bunny.update(millis);
       bear.update(millis);
       gunter.update(millis);
-      if (collides(gunter,simon)){
-        console.log("it works!");
-      }
     },
     draw: function(context){
       function rotate(sprite, angle){
