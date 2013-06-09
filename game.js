@@ -1,4 +1,4 @@
-require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation','plugins/loadImage!BMO.png', 'plugins/loadImage!ChainsawBear.png', 'plugins/loadImage!Gunter.png', 'plugins/loadImage!KnifeBunny.png', 'dojo/keys'],
+require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'plugins/loadImage!BMO.png', 'plugins/loadImage!ChainsawBear.png', 'plugins/loadImage!Gunter.png', 'plugins/loadImage!KnifeBunny.png', 'dojo/keys'],
   function(GameCore, ResourceManager, Sprite, Animation, bmoImg, bearImg, gunterImg, bunnyImg, keys){
   'use strict';
 
@@ -9,7 +9,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angleGunter = 90;
   var angleBear = 265;
   var gameStart = false;
-
 
       /// new sprite object maintian position, and velocities ///
   var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 16});
@@ -40,6 +39,12 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       /// converts degrees to radians for rotate function ///
   function degToRad(angle){
     return (angle*Math.PI)/180
+  }
+
+  function getPosition(angle){
+    var x = (backImg.width/2)+((earth.width/2)*Math.cos(angleSimon - degToRad(90)));
+    var y = (backImg.height/2)+((earth.height/2)*Math.sin(angleSimon - degToRad(90)));
+    return(x,y);
   }
 
       ///create new gameCore instance ///
@@ -74,9 +79,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
         /// updates the game state every millisecond ///
     update: function(millis){
-      if (collides(simon,gunter) === true){
-        console.log("it works!");
-      }
       simon.update(millis);
       bunny.update(millis);
       bear.update(millis);
@@ -114,6 +116,5 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     // }
   }
   });
-
   game.run();
 });
