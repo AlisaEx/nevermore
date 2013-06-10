@@ -16,12 +16,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     width: 32,
     height: 40
   };
-  var bearObj = {
-    x: 175,
-    y: 400,
-    width: 120,
-    height: 128
-  };
 
       /// new sprite object maintian position, and velocities ///
   var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32});
