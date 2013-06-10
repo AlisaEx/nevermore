@@ -9,12 +9,14 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angleGunter = 90;
   var angleBear = 265;
   var gameStart = false;
+  var newX = 0;
+  var newY = 0;
 
       /// new sprite object maintian position, and velocities ///
-  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 16});
-  var bear = new Sprite({x:175, y:400, width:8520, height: 128, dx: 0, dy: 0, collisionRadius: 60});
-  var gunter = new Sprite({x:640, y:300, width:100, height: 32, dx: 0, dy: 0, collisionRadius: 28});
-  var bunny = new Sprite({x:460, y:540, width:896, height: 40, dx: 0, dy: 0, collisionRadius: 28});
+  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0});
+  var bear = new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0});
+  var gunter = new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0});
+  var bunny = new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0});
 
       /// load images ///
   var rm = new ResourceManager();
@@ -28,23 +30,37 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   gunter.anim = Animation.prototype.createFromSheet(37, 100, gunterImg, 56, 32);
   bunny.anim = Animation.prototype.createFromSheet(16, 100, bunnyImg, 56, 40);
 
+      /// converts degrees to radians for rotate function ///
+  function degToRad(angle){
+    return (angle*Math.PI)/180;
+  }
+
+  function getPosition(angle){
+    if (simon.y <-200){
+      newX = (backImg.width/2)+(((earth.width/2)+10)*Math.cos(angle - degToRad(90)));
+      newY = (backImg.height/2)+(((earth.height/2)+10)*Math.sin(angle - degToRad(90)));
+    }
+    else{
+      newX = (backImg.width/2)+((earth.width/2)*Math.cos(angle - degToRad(90)));
+      newY = (backImg.height/2)+((earth.height/2)*Math.sin(angle - degToRad(90)));
+    }
+    return (newX, newY);
+    // console.log(newX, newY);
+  }
+  getPosition(angleSimon);
+  var newPosition = {
+    x: newX,
+    y: newY,
+    width: 32,
+    height: 40
+  };
+
       /// collision detection function ///
   function collides(a, b) {
     return a.x < b.x + b.width && 
            a.x + a.width > b.x &&
            a.y < b.y + b.height && 
            a.y + a.height > b.y;
-  }
-
-      /// converts degrees to radians for rotate function ///
-  function degToRad(angle){
-    return (angle*Math.PI)/180
-  }
-
-  function getPosition(angle){
-    var x = (backImg.width/2)+((earth.width/2)*Math.cos(angleSimon - degToRad(90)));
-    var y = (backImg.height/2)+((earth.height/2)*Math.sin(angleSimon - degToRad(90)));
-    console.log(x,y);
   }
 
       ///create new gameCore instance ///
@@ -57,7 +73,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       im.addKeyAction(keys.UP_ARROW);
       im.addKeyAction(keys.ENTER);
     },
-
         /// handles input ///
     handleInput: function(im){
       if (simon.y < -209){
@@ -77,9 +92,11 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
         getPosition(angleSimon);
       }
     },
-
         /// updates the game state every millisecond ///
     update: function(millis){
+      if (collides(newPosition, gunter)===true){
+        console.log("Fucking finally!");
+      }
       simon.update(millis);
       bunny.update(millis);
       bear.update(millis);
