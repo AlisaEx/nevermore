@@ -44,7 +44,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   function getPosition(angle){
     var x = (backImg.width/2)+((earth.width/2)*Math.cos(angleSimon - degToRad(90)));
     var y = (backImg.height/2)+((earth.height/2)*Math.sin(angleSimon - degToRad(90)));
-    return(x,y);
+    console.log(x,y);
   }
 
       ///create new gameCore instance ///
@@ -74,6 +74,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       }
       if(im.keyActions[keys.ENTER].isPressed()){
         gameStart = true;
+        getPosition(angleSimon);
       }
     },
 
