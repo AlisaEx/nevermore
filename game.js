@@ -9,8 +9,13 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angleGunter = 90;
   var angleBear = 265;
   var gameStart = false;
-  var newX = 0;
-  var newY = 0;
+    /// variable to save updated location for collision ///
+  var newPosition = {
+    x: 0,
+    y: 0,
+    width: 32,
+    height: 40
+  };
 
       /// new sprite object maintian position, and velocities ///
   var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0});
@@ -34,26 +39,18 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   function degToRad(angle){
     return (angle*Math.PI)/180;
   }
-
-  function getPosition(angle){
+      /// updates the real-time position of the main character ///
+  function getPosition(a, angle){
     if (simon.y <-200){
-      newX = (backImg.width/2)+(((earth.width/2)+10)*Math.cos(angle - degToRad(90)));
-      newY = (backImg.height/2)+(((earth.height/2)+10)*Math.sin(angle - degToRad(90)));
+      a.x = (backImg.width/2)+(((earth.width/2)+10)*Math.cos(angle - degToRad(90)));
+      a.y = (backImg.height/2)+(((earth.height/2)+10)*Math.sin(angle - degToRad(90)));
     }
     else{
-      newX = (backImg.width/2)+((earth.width/2)*Math.cos(angle - degToRad(90)));
-      newY = (backImg.height/2)+((earth.height/2)*Math.sin(angle - degToRad(90)));
+      a.x = (backImg.width/2)+((earth.width/2)*Math.cos(angle - degToRad(90)));
+      a.y = (backImg.height/2)+((earth.height/2)*Math.sin(angle - degToRad(90)));
     }
-    return (newX, newY);
-    // console.log(newX, newY);
+    return (a.x,a.y);
   }
-  getPosition(angleSimon);
-  var newPosition = {
-    x: newX,
-    y: newY,
-    width: 32,
-    height: 40
-  };
 
       /// collision detection function ///
   function collides(a, b) {
@@ -89,11 +86,11 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       }
       if(im.keyActions[keys.ENTER].isPressed()){
         gameStart = true;
-        getPosition(angleSimon);
       }
     },
         /// updates the game state every millisecond ///
     update: function(millis){
+      getPosition(newPosition, angleSimon);
       if (collides(newPosition, gunter)===true){
         console.log("Fucking finally!");
       }
