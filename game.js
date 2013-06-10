@@ -91,9 +91,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
         /// updates the game state every millisecond ///
     update: function(millis){
       getPosition(newPosition, angleSimon);
-      if (collides(newPosition, gunter)===true){
-        console.log("Fucking finally!");
-      }
       simon.update(millis);
       bunny.update(millis);
       bear.update(millis);
@@ -128,6 +125,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       context.rotate(angleSimon);
       simon.draw(context);
       context.restore();
+      if (collides(newPosition, gunter)===true){
+        context.fillText('Hello World.', gunter.x+10, gunter.y);
+      }
     // }
   }
   });
