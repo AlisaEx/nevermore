@@ -16,12 +16,18 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     width: 32,
     height: 40
   };
+  var bearObj = {
+    x: 175,
+    y: 400,
+    width: 120,
+    height: 128
+  };
 
       /// new sprite object maintian position, and velocities ///
-  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0});
-  var bear = new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0});
-  var gunter = new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0});
-  var bunny = new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0});
+  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32});
+  var bear = new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120});
+  var gunter = new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56});
+  var bunny = new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56});
 
       /// load images ///
   var rm = new ResourceManager();
@@ -54,7 +60,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
       /// collision detection function ///
   function collides(a, b) {
-    return a.x < b.x + b.width && 
+    return a.x < b.x + b.collisionRadius && 
            a.x + a.width > b.x &&
            a.y < b.y + b.height && 
            a.y + a.height > b.y;
@@ -126,7 +132,19 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       simon.draw(context);
       context.restore();
       if (collides(newPosition, gunter)===true){
+        context.font = 'italic 12pt Calibri';
+        context.fillStyle = 'black';
         context.fillText('Hello World.', gunter.x+10, gunter.y);
+      }
+      if (collides(newPosition, bunny)===true) {
+        context.font = 'italic 12pt Calibri';
+        context.fillStyle = 'black';
+        context.fillText('Why is there a knife on my head?', bunny.x, bunny.y+10);
+      }
+      if (collides(newPosition, bear)===true){
+        context.font = 'italic 12pt Calibri';
+        context.fillStyle = 'black';
+        context.fillText("I keep exploding and I don't know why", bear.x-10, bear.y);
       }
     // }
   }
