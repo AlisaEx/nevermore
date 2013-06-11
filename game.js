@@ -9,19 +9,26 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   var angleGunter = 90;
   var angleBear = 265;
   var gameStart = false;
-    /// variable to save updated location for collision ///
-  var newPosition = {
-    x: 0,
-    y: 0,
-    width: 32,
-    height: 40
+  var updateables = [];
+      /// declare entities ///
+  var simon = {
+    sprite: new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32})
+    angle: 0
   };
-
-      /// new sprite object maintian position, and velocities ///
-  var simon = new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32});
-  var bear = new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120});
-  var gunter = new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56});
-  var bunny = new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56});
+  var bear = {
+    sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120})
+    angle: 265
+  };
+  var gunter = {
+    sprite: new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56})
+    angle: 90
+  };
+  var bunny = {
+    sprite: new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56})
+    angle: 180
+  };
+  var newPosition = {x: 0, y: 0, width: 32, height: 40};
+  updateables.push(simon);updateables.push(bear);updateables.push(gunter);updateables.push(bunny);
 
       /// load images ///
   var rm = new ResourceManager();
@@ -30,10 +37,10 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
 
       /// set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
-  simon.anim = Animation.prototype.createFromSheet(10,100,bmoImg, 32,40)
-  bear.anim = Animation.prototype.createFromSheet(71, 100, bearImg, 120, 128);
-  gunter.anim = Animation.prototype.createFromSheet(37, 100, gunterImg, 56, 32);
-  bunny.anim = Animation.prototype.createFromSheet(16, 100, bunnyImg, 56, 40);
+  simon.sprite.anim = Animation.prototype.createFromSheet(10,100,bmoImg, 32,40)
+  bear.sprite.anim = Animation.prototype.createFromSheet(71, 100, bearImg, 120, 128);
+  gunter.sprite.anim = Animation.prototype.createFromSheet(37, 100, gunterImg, 56, 32);
+  bunny.sprite.anim = Animation.prototype.createFromSheet(16, 100, bunnyImg, 56, 40);
 
       /// converts degrees to radians for rotate function ///
   function degToRad(angle){
@@ -41,7 +48,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   }
       /// updates the real-time position of the main character ///
   function getPosition(a, angle){
-    if (simon.y <-200){
+    if (simon.sprite.y <-200){
       a.x = (backImg.width/2)+(((earth.width/2)+10)*Math.cos(angle - degToRad(90)));
       a.y = (backImg.height/2)+(((earth.height/2)+10)*Math.sin(angle - degToRad(90)));
     }
@@ -72,17 +79,17 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     },
         /// handles input ///
     handleInput: function(im){
-      if (simon.y < -209){
-        simon.y = -200;
+      if (simon.sprite.y < -209){
+        simon.sprite.y = -200;
       }
-      if(im.keyActions[keys.LEFT_ARROW].isPressed()){
+      if(im.keyActions[keys.LEFT_ARROW].isPressed() && gameStart === true){
         angleSimon -= angularVelocity;
       }
-      if(im.keyActions[keys.RIGHT_ARROW].isPressed()){
+      if(im.keyActions[keys.RIGHT_ARROW].isPressed() && gameStart === true){
         angleSimon += angularVelocity;
       }
       if(im.keyActions[keys.UP_ARROW].isPressed()){
-          simon.y -= 10;
+          simon.sprite.y -= 10;
       }
       if(im.keyActions[keys.ENTER].isPressed()){
         gameStart = true;
@@ -91,10 +98,9 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
         /// updates the game state every millisecond ///
     update: function(millis){
       getPosition(newPosition, angleSimon);
-      simon.update(millis);
-      bunny.update(millis);
-      bear.update(millis);
-      gunter.update(millis);
+      updateables.forEach(function(entity){
+        entity.sprite.update(millis);
+      })
     },
     draw: function(context){
       function rotate(sprite, angle){
@@ -106,41 +112,41 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
         sprite.draw(context);
         context.restore();
       }
-      // if (gameStart === false){
-      //   context.drawImage(backImg,0,0, this.width, this.height);
-      //   context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      //   context.font = 'italic 28pt Calibri';
-      //   context.fillStyle ='black';
-      //   context.fillText('Welcome to Nevermore.', 300, backImg.height/2);
-      //   context.fillText('Press ENTER to start.', 350, backImg.height/2 + 50);
-      // }
-      // else{
+      if (gameStart === false){
+        context.drawImage(backImg,0,0, this.width, this.height);
+        context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
+        context.font = 'italic 28pt Calibri';
+        context.fillStyle ='white';
+        context.fillText('Welcome to Nevermore.', 300, backImg.height/2);
+        context.fillText('Press ENTER to start.', 350, backImg.height/2 + 50);
+      }
+      else{
       context.drawImage(backImg, 0, 0, this.width, this.height);
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      rotate(bunny, angleBunny);
-      rotate(bear, angleBear);
-      rotate(gunter, angleGunter);
+      rotate(bunny.sprite, angleBunny);
+      rotate(bear.sprite, angleBear);
+      rotate(gunter.sprite, angleGunter);
       context.save();
       context.translate(backImg.width/2, backImg.height/2);
       context.rotate(angleSimon);
-      simon.draw(context);
+      simon.sprite.draw(context);
       context.restore();
-      if (collides(newPosition, gunter)===true){
+      if (collides(newPosition, gunter.sprite)===true){
         context.font = 'italic 12pt Calibri';
         context.fillStyle = 'black';
         context.fillText('Hello World.', gunter.x+10, gunter.y);
       }
-      if (collides(newPosition, bunny)===true) {
+      if (collides(newPosition, bunny.sprite)===true) {
         context.font = 'italic 12pt Calibri';
         context.fillStyle = 'black';
         context.fillText('Why is there a knife on my head?', bunny.x, bunny.y+10);
       }
-      if (collides(newPosition, bear)===true){
+      if (collides(newPosition, bear.sprite)===true){
         context.font = 'italic 12pt Calibri';
         context.fillStyle = 'black';
         context.fillText("I keep exploding and I don't know why", bear.x-10, bear.y);
       }
-    // }
+    }
   }
   });
   game.run();
