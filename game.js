@@ -4,32 +4,31 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
 
       /// global variables ///
   var angularVelocity = .03;
-  var angleSimon = 0;
-  var angleBunny = 180;
-  var angleGunter = 90;
-  var angleBear = 265;
   var gameStart = false;
   var updateables = [];
+  var rotateables = [];
+
+
       /// declare entities ///
   var simon = {
-    sprite: new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32})
+    sprite: new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32}),
     angle: 0
   };
   var bear = {
-    sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120})
+    sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120}),
     angle: 265
   };
   var gunter = {
-    sprite: new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56})
+    sprite: new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56}),
     angle: 90
   };
   var bunny = {
-    sprite: new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56})
+    sprite: new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56}),
     angle: 180
   };
   var newPosition = {x: 0, y: 0, width: 32, height: 40};
   updateables.push(simon);updateables.push(bear);updateables.push(gunter);updateables.push(bunny);
-
+  rotateables.push(bear);rotateables.push(gunter);rotateables.push(bunny);
       /// load images ///
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
@@ -83,10 +82,10 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
         simon.sprite.y = -200;
       }
       if(im.keyActions[keys.LEFT_ARROW].isPressed() && gameStart === true){
-        angleSimon -= angularVelocity;
+        simon.angle -= angularVelocity;
       }
       if(im.keyActions[keys.RIGHT_ARROW].isPressed() && gameStart === true){
-        angleSimon += angularVelocity;
+        simon.angle += angularVelocity;
       }
       if(im.keyActions[keys.UP_ARROW].isPressed()){
           simon.sprite.y -= 10;
@@ -97,21 +96,12 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     },
         /// updates the game state every millisecond ///
     update: function(millis){
-      getPosition(newPosition, angleSimon);
+      getPosition(newPosition, simon.angle);
       updateables.forEach(function(entity){
         entity.sprite.update(millis);
       })
     },
     draw: function(context){
-      function rotate(sprite, angle){
-        angle = degToRad(angle);
-        context.save();
-        context.translate(sprite.x, sprite.y);
-        context.rotate(angle);
-        context.translate(-(sprite.x), -(sprite.y));
-        sprite.draw(context);
-        context.restore();
-      }
       if (gameStart === false){
         context.drawImage(backImg,0,0, this.width, this.height);
         context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
@@ -123,12 +113,22 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       else{
       context.drawImage(backImg, 0, 0, this.width, this.height);
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      rotate(bunny.sprite, angleBunny);
-      rotate(bear.sprite, angleBear);
-      rotate(gunter.sprite, angleGunter);
+      // rotate(bunny.sprite, bunny.angle);
+      // rotate(bear.sprite, bear.angle);
+      // rotate(gunter.sprite, gunter.angle);
+      rotateables.forEach(
+        function rotate(entity){
+          entity.angle = degToRad(entity.angle);
+          context.save();
+          context.translate(entity.sprite.x, entity.sprite.y);
+          context.rotate(entity.angle);
+          context.translate(-(entity.sprite.x), -(entity.sprite.y));
+          entity.sprite.draw(context);
+          context.restore();
+        })
       context.save();
       context.translate(backImg.width/2, backImg.height/2);
-      context.rotate(angleSimon);
+      context.rotate(simon.angle);
       simon.sprite.draw(context);
       context.restore();
       if (collides(newPosition, gunter.sprite)===true){
