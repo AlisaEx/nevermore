@@ -3,7 +3,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   'use strict';
 
       /// global variables ///
-  var gameStart       = true;
+  var gameStart       = false;
   var updateables     = [];
   var rotateables     = [];
   var collidables     = [];
@@ -22,21 +22,13 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       context.restore();      
     }
   };
-  var bear   = {
-    sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120}),
-    angle: 265,
-    doesCollide: function (context){
-      context.font = 'italic 12pt Calibri';
-      context.fillStyle = 'black';
-      context.fillText("I keep exploding and I don't know why", bear.sprite.x-10, bear.sprite.y);}
-  };
   var gunter = {
     sprite: new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56}),
     angle: 90,
     doesCollide: function (context){
       context.font = 'italic 12pt Calibri';
       context.fillStyle = 'black';
-      context.fillText('Hello World.', gunter.sprite.x+10, gunter.sprite.y);}
+      context.fillText('Meep.', gunter.sprite.x+10, gunter.sprite.y);}
   };
   var bunny  = {
     sprite: new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56}),
@@ -46,17 +38,31 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       context.fillStyle = 'black';
       context.fillText('Why is there a knife on my head?', bunny.sprite.x, bunny.sprite.y+10);}
   };
-      /// push objects to collide array ///
-  collidables.push(bear);collidables.push(gunter);collidables.push(bunny);
-      /// push objects to update array ///
-  updateables.push(simon);updateables.push(bear);updateables.push(gunter);updateables.push(bunny);
-      /// push objects to rotate array ///
-  rotateables.push(bear);rotateables.push(gunter);rotateables.push(bunny);
+  var bear   = {
+  sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120}),
+  angle: 265,
+  doesCollide: function (context){
+    context.font = 'italic 12pt Calibri';
+    context.fillStyle = 'black';
+    context.fillText("Why do I keep exploding?", bear.sprite.x-10, bear.sprite.y);}
+  };
+      /// push objects to their respective arrays ///
+  collidables.push(gunter);collidables.push(bunny);collidables.push(bear);
+  updateables.push(simon);updateables.push(gunter);updateables.push(bunny);updateables.push(bear);
+  rotateables.push(gunter);rotateables.push(bunny);rotateables.push(bear);
 
-      /// load images ///
-  var rm = new ResourceManager();
-  var backImg = rm.loadImage('images/background.png');
-  var earth = rm.loadImage('images/outterRim.png');
+      /// Resource Manager ///
+  var rm = new ResourceManager({
+    soundsDir: 'sounds/',
+    imageDir: 'images/'
+  });
+      /// Load Images ///
+  var backImg = rm.loadImage('background.png');
+  var earth = rm.loadImage('outterRim.png');
+
+      /// Load Sounds ///
+  var music = rm.loadSound('music.ogg');
+  var musicSource = null;
 
       /// set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
   simon.sprite.anim = Animation.prototype.createFromSheet(10,100,bmoImg, 32,40)
@@ -113,21 +119,22 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     },
         /// updates the game state every millisecond ///
     update: function(millis){
+      // musicSource = rm.playSound(music, true); //Loop music.
       getPosition(simon.translatedPosition, simon.angle);
       updateables.forEach(function(entity){
         entity.sprite.update(millis);
       })
     },
     draw: function(context){
-      // if (gameStart === false){
-      //   context.drawImage(backImg,0,0, this.width, this.height);
-      //   context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      //   context.font = 'italic 28pt Calibri';
-      //   context.fillStyle ='white';
-      //   context.fillText('Welcome to Nevermore.', 300, backImg.height/2);
-      //   context.fillText('Press ENTER to start.', 350, backImg.height/2 + 50);
-      // }
-      // else{
+      if (gameStart === false){
+        context.drawImage(backImg,0,0, this.width, this.height);
+        context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
+        context.font = 'italic 28pt Calibri';
+        context.fillStyle ='white';
+        context.fillText('Welcome to Nevermore.', 300, backImg.height/2);
+        context.fillText('Press ENTER to start.', 350, backImg.height/2 + 50);
+      }
+      else{
       context.drawImage(backImg, 0, 0, this.width, this.height);
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
       rotateables.forEach(function rotate(entity){
@@ -144,7 +151,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
             entity.doesCollide(context);
           }
       })
-    // }
+    }
   },
   });
   game.run();
