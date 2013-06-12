@@ -1,21 +1,22 @@
-require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'plugins/loadImage!BMO.png', 'plugins/loadImage!ChainsawBear.png', 'plugins/loadImage!Gunter.png', 'plugins/loadImage!KnifeBunny.png', 'dojo/keys'],
-  function(GameCore, ResourceManager, Sprite, Animation, bmoImg, bearImg, gunterImg, bunnyImg, keys){
+require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/Animation', 'utils/degreesToRadians.js','plugins/loadImage!images/BMO.png', 'plugins/loadImage!images/ChainsawBear.png', 'plugins/loadImage!images/Gunter.png', 'plugins/loadImage!images/KnifeBunny.png', 'dojo/keys'],
+  function(GameCore, ResourceManager, Sprite, Animation, degreesToRadians, bmoImg, bearImg, gunterImg, bunnyImg, keys){
   'use strict';
 
       /// global variables ///
   var angularVelocity = .03;
-  var gameStart = true;
-  var updateables = [];
-  var rotateables = [];
+  var gameStart       = true;
+  var updateables     = [];
+  var rotateables     = [];
+  var collidables     = [];
 
       /// declare entities ///
-  var simon = {
+  var simon  = {
     sprite: new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32}),
     angularVelocity: 0.03,
     angle: 0,
     translatedPosition: {x: 0, y: 0, width: 32, height: 40}
   };
-  var bear = {
+  var bear   = {
     sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120}),
     angle: 265
   };
@@ -23,7 +24,7 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     sprite: new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56}),
     angle: 90
   };
-  var bunny = {
+  var bunny  = {
     sprite: new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56}),
     angle: 180
   };
@@ -33,17 +34,16 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   updateables.push(bear);
   updateables.push(gunter);
   updateables.push(bunny);
+
       /// push objects to rotate array ///
   rotateables.push(bear);
   rotateables.push(gunter);
   rotateables.push(bunny);
 
-
       /// load images ///
   var rm = new ResourceManager();
   var backImg = rm.loadImage('images/background.png');
   var earth = rm.loadImage('images/outterRim.png');
-
 
       /// set the sprite animation to use 8 frames, 100 millis/frame, spritesheet, 96x96 pixels
   simon.sprite.anim = Animation.prototype.createFromSheet(10,100,bmoImg, 32,40)
@@ -51,23 +51,18 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   gunter.sprite.anim = Animation.prototype.createFromSheet(37, 100, gunterImg, 56, 32);
   bunny.sprite.anim = Animation.prototype.createFromSheet(16, 100, bunnyImg, 56, 40);
 
-      /// converts degrees to radians for rotate function ///
-  function degToRad(angle){
-    return (angle*Math.PI)/180;
-  }
       /// updates the real-time position of the main character ///
   function getPosition(a, angle){
     if (simon.sprite.y <-200){
-      a.x = (backImg.width/2)+(((earth.width/2)+10)*Math.cos(angle - degToRad(90)));
-      a.y = (backImg.height/2)+(((earth.height/2)+10)*Math.sin(angle - degToRad(90)));
+      a.x = (backImg.width/2)+(((earth.width/2)+10)*Math.cos(angle - degreesToRadians(90)));
+      a.y = (backImg.height/2)+(((earth.height/2)+10)*Math.sin(angle - degreesToRadians(90)));
     }
     else{
-      a.x = (backImg.width/2)+((earth.width/2)*Math.cos(angle - degToRad(90)));
-      a.y = (backImg.height/2)+((earth.height/2)*Math.sin(angle - degToRad(90)));
+      a.x = (backImg.width/2)+((earth.width/2)*Math.cos(angle - degreesToRadians(90)));
+      a.y = (backImg.height/2)+((earth.height/2)*Math.sin(angle - degreesToRadians(90)));
     }
     return (a.x,a.y);
   }
-
       /// collision detection function ///
   function collides(a, b) {
     return a.x < b.x + b.collisionRadius && 
@@ -75,7 +70,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
            a.y < b.y + b.height && 
            a.y + a.height > b.y;
   }
-
       ///create new gameCore instance ///
   var game = new GameCore({
     canvasId: 'canvas',
@@ -102,7 +96,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       }
       if(im.keyActions[keys.ENTER].isPressed()){
         gameStart = true;
-        console.log(bear.angle);
       }
     },
         /// updates the game state every millisecond ///
@@ -124,11 +117,10 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       // else{
       context.drawImage(backImg, 0, 0, this.width, this.height);
       context.drawImage(earth, backImg.width/2-earth.width/2, backImg.height/2-earth.height/2);
-      rotateables.forEach(
-        function rotate(entity){
+      rotateables.forEach(function rotate(entity){
           context.save();
           context.translate(entity.sprite.x, entity.sprite.y);
-          context.rotate(degToRad(entity.angle));
+          context.rotate(degreesToRadians(entity.angle));
           context.translate(-(entity.sprite.x), -(entity.sprite.y));
           entity.sprite.draw(context);
           context.restore();
@@ -141,17 +133,17 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
       if (collides(simon.translatedPosition, gunter.sprite)===true){
         context.font = 'italic 12pt Calibri';
         context.fillStyle = 'black';
-        context.fillText('Hello World.', gunter.x+10, gunter.y);
+        context.fillText('Hello World.', gunter.sprite.x+10, gunter.sprite.y);
       }
       if (collides(simon.translatedPosition, bunny.sprite)===true) {
         context.font = 'italic 12pt Calibri';
         context.fillStyle = 'black';
-        context.fillText('Why is there a knife on my head?', bunny.x, bunny.y+10);
+        context.fillText('Why is there a knife on my head?', bunny.sprite.x, bunny.sprite.y+10);
       }
       if (collides(simon.translatedPosition, bear.sprite)===true){
         context.font = 'italic 12pt Calibri';
         context.fillStyle = 'black';
-        context.fillText("I keep exploding and I don't know why", bear.x-10, bear.y);
+        context.fillText("I keep exploding and I don't know why", bear.sprite.x-10, bear.sprite.y);
       }
     // }
   },
