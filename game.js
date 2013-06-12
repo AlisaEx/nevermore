@@ -3,7 +3,6 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
   'use strict';
 
       /// global variables ///
-  var angularVelocity = .03;
   var gameStart       = true;
   var updateables     = [];
   var rotateables     = [];
@@ -14,31 +13,45 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
     sprite: new Sprite({x:0, y: -200, width: 544, height: 40, dx: 0, dy: 0, collisionRadius: 32}),
     angularVelocity: 0.03,
     angle: 0,
-    translatedPosition: {x: 0, y: 0, width: 32, height: 40}
+    translatedPosition: {x: 0, y: 0, width: 32, height: 40},
+    drawImg: function(context){
+      context.save();
+      context.translate(backImg.width/2, backImg.height/2);
+      context.rotate(simon.angle);
+      simon.sprite.draw(context);
+      context.restore();      
+    }
   };
   var bear   = {
     sprite: new Sprite({x: 175, y: 400, width: 8520, height: 128, dx: 0, dy: 0, collisionRadius: 120}),
-    angle: 265
+    angle: 265,
+    doesCollide: function (context){
+      context.font = 'italic 12pt Calibri';
+      context.fillStyle = 'black';
+      context.fillText("I keep exploding and I don't know why", bear.sprite.x-10, bear.sprite.y);}
   };
   var gunter = {
     sprite: new Sprite({x: 640, y: 300, width: 100, height: 32, dx: 0, dy: 0, collisionRadius: 56}),
-    angle: 90
+    angle: 90,
+    doesCollide: function (context){
+      context.font = 'italic 12pt Calibri';
+      context.fillStyle = 'black';
+      context.fillText('Hello World.', gunter.sprite.x+10, gunter.sprite.y);}
   };
   var bunny  = {
     sprite: new Sprite({x: 460, y: 540, width: 896, height: 40, dx: 0, dy: 0, collisionRadius: 56}),
-    angle: 180
+    angle: 180,
+    doesCollide: function (context){
+      context.font = 'italic 12pt Calibri';
+      context.fillStyle = 'black';
+      context.fillText('Why is there a knife on my head?', bunny.sprite.x, bunny.sprite.y+10);}
   };
-
+      /// push objects to collide array ///
+  collidables.push(bear);collidables.push(gunter);collidables.push(bunny);
       /// push objects to update array ///
-  updateables.push(simon);
-  updateables.push(bear);
-  updateables.push(gunter);
-  updateables.push(bunny);
-
+  updateables.push(simon);updateables.push(bear);updateables.push(gunter);updateables.push(bunny);
       /// push objects to rotate array ///
-  rotateables.push(bear);
-  rotateables.push(gunter);
-  rotateables.push(bunny);
+  rotateables.push(bear);rotateables.push(gunter);rotateables.push(bunny);
 
       /// load images ///
   var rm = new ResourceManager();
@@ -125,26 +138,12 @@ require(['frozen/GameCore', 'frozen/ResourceManager', 'frozen/Sprite', 'frozen/A
           entity.sprite.draw(context);
           context.restore();
         })
-      context.save();
-      context.translate(backImg.width/2, backImg.height/2);
-      context.rotate(simon.angle);
-      simon.sprite.draw(context);
-      context.restore();
-      if (collides(simon.translatedPosition, gunter.sprite)===true){
-        context.font = 'italic 12pt Calibri';
-        context.fillStyle = 'black';
-        context.fillText('Hello World.', gunter.sprite.x+10, gunter.sprite.y);
-      }
-      if (collides(simon.translatedPosition, bunny.sprite)===true) {
-        context.font = 'italic 12pt Calibri';
-        context.fillStyle = 'black';
-        context.fillText('Why is there a knife on my head?', bunny.sprite.x, bunny.sprite.y+10);
-      }
-      if (collides(simon.translatedPosition, bear.sprite)===true){
-        context.font = 'italic 12pt Calibri';
-        context.fillStyle = 'black';
-        context.fillText("I keep exploding and I don't know why", bear.sprite.x-10, bear.sprite.y);
-      }
+      simon.drawImg(context);
+      collidables.forEach(function(entity){
+        if (collides(simon.translatedPosition, entity.sprite)===true){
+            entity.doesCollide(context);
+          }
+      })
     // }
   },
   });
